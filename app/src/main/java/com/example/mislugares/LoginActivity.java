@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
@@ -17,16 +19,19 @@ import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 123;
-    List<AuthUI.IdpConfig> providers = Arrays.asList(
-            new AuthUI.IdpConfig.EmailBuilder().build(),
-            /*new AuthUI.IdpConfig.PhoneBuilder().build(),*/
-            new AuthUI.IdpConfig.GoogleBuilder().build() /*,
-               new AuthUI.IdpConfig.FacebookBuilder().build(),*/
-            /*new AuthUI.IdpConfig.TwitterBuilder().build()*/);
+    List<AuthUI.IdpConfig> providers = null;
    
    
     @Override protected void onCreate(Bundle savedInst) {
         super.onCreate(savedInst);
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
+        providers = Arrays.asList(
+                new AuthUI.IdpConfig.EmailBuilder().build(),
+                /*new AuthUI.IdpConfig.PhoneBuilder().build(),*/
+                new AuthUI.IdpConfig.GoogleBuilder().build(),
+                new AuthUI.IdpConfig.FacebookBuilder().build() /*,*/
+                /*new AuthUI.IdpConfig.TwitterBuilder().build()*/);
 
 
 
