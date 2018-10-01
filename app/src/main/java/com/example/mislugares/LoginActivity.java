@@ -32,11 +32,7 @@ public class LoginActivity extends AppCompatActivity {
                 new AuthUI.IdpConfig.GoogleBuilder().build(),
                 new AuthUI.IdpConfig.FacebookBuilder().build() /*,*/
                 /*new AuthUI.IdpConfig.TwitterBuilder().build()*/);
-
-
-
-
-        login();
+                login();
     }
 
     private void login() {
