@@ -72,6 +72,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
+        <Button android:id="@+id/btn_cerrar_sesion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cerrar sesión"
+            android:padding="8dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:background="#d0021b"
+            android:textColor="#fff"/>
 
     </LinearLayout>
+
 </ScrollView>

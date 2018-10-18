@@ -49,9 +49,13 @@ public class LoginActivity extends AppCompatActivity {
             FirebaseAuth.getInstance().getCurrentUser().reload();
             AuthUI.getInstance().signOut(getApplicationContext());
             usuario.sendEmailVerification();
-            startActivityForResult(AuthUI.getInstance()
+            /*startActivityForResult(AuthUI.getInstance()
                     .createSignInIntentBuilder().setAvailableProviders(providers)
-                    .setIsSmartLockEnabled(true).build(), RC_SIGN_IN);
+                    .setIsSmartLockEnabled(true).build(), RC_SIGN_IN);*/
+            Intent i = new Intent(getCurrentActivity(),LoginActivity.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(i);
+            getCurrentActivity().finish();
 
         }
         if ((usuario != null&&providerType!=null&&!"password".equals(providerType))||((usuario != null&&"password".equals(providerType)&&usuario.isEmailVerified()))) {
