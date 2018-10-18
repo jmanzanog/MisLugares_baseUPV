@@ -96,6 +96,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             Intent intent = new Intent(this, MapaActivity.class);
             startActivity(intent);
         }
+        if (id == R.id.menu_usuario) {
+            Intent intent = new Intent(this, UsuarioActivity.class);
+            startActivity(intent);
+        }
         return super.onOptionsItemSelected(item);
     }
 

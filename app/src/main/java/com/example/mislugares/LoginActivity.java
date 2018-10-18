@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
             usuario.sendEmailVerification();
             startActivityForResult(AuthUI.getInstance()
                     .createSignInIntentBuilder().setAvailableProviders(providers)
-                    .setIsSmartLockEnabled(false).build(), RC_SIGN_IN);
+                    .setIsSmartLockEnabled(true).build(), RC_SIGN_IN);
 
         }
         if ((usuario != null&&providerType!=null&&!"password".equals(providerType))||((usuario != null&&"password".equals(providerType)&&usuario.isEmailVerified()))) {
@@ -67,7 +67,7 @@ public class LoginActivity extends AppCompatActivity {
         if (usuario == null|| providerType ==null) {
             startActivityForResult(AuthUI.getInstance()
                     .createSignInIntentBuilder().setAvailableProviders(providers)
-                    .setIsSmartLockEnabled(false).build(), RC_SIGN_IN);
+                    .setIsSmartLockEnabled(true).build(), RC_SIGN_IN);
         }
     }
 
@@ -76,22 +76,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
             IdpResponse response2 = IdpResponse.fromResultIntent(data);
-            /*if ("password".equals(response2.getProviderType())&&!FirebaseAuth.getInstance().getCurrentUser().isEmailVerified()){
-                progressDialog = new ProgressDialog(getCurrentActivity());
-                progressDialog.setTitle("Processing...");
-                progressDialog.setMessage("Please wait.");
-                progressDialog.setCancelable(false);
-                progressDialog.setIndeterminate(true);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (!isFinishing()) {
-                            progressDialog.show();
-
-                        }
-                    }
-                });
-            }*/
             Log.d("getProviderType()", response2.getProviderType());
 
             Log.d("IdpResponse", new Gson().toJson(response2));

@@ -94,6 +94,9 @@
                 android:resource="@xml/file_paths">
             </meta-data>
         </provider>
+
+        <activity android:name=".UsuarioActivity"
+            android:label="Información sobre el usuario" />
     </application>
 
 </manifest>
