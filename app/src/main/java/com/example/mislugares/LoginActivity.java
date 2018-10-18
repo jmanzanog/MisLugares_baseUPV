@@ -37,8 +37,8 @@ public class LoginActivity extends AppCompatActivity {
                 new AuthUI.IdpConfig.EmailBuilder().build(),
                 new AuthUI.IdpConfig.PhoneBuilder().build(),
                 new AuthUI.IdpConfig.GoogleBuilder().build(),
-                new AuthUI.IdpConfig.FacebookBuilder().build() /*,*/
-                /*new AuthUI.IdpConfig.TwitterBuilder().build()*/);
+                new AuthUI.IdpConfig.FacebookBuilder().build(), /*,*/
+                new AuthUI.IdpConfig.TwitterBuilder().build());
                 login(null);
     }
 
@@ -49,9 +49,7 @@ public class LoginActivity extends AppCompatActivity {
             FirebaseAuth.getInstance().getCurrentUser().reload();
             AuthUI.getInstance().signOut(getApplicationContext());
             usuario.sendEmailVerification();
-            /*startActivityForResult(AuthUI.getInstance()
-                    .createSignInIntentBuilder().setAvailableProviders(providers)
-                    .setIsSmartLockEnabled(true).build(), RC_SIGN_IN);*/
+
             Intent i = new Intent(getCurrentActivity(),LoginActivity.class);
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(i);
@@ -70,7 +68,10 @@ public class LoginActivity extends AppCompatActivity {
         }
         if (usuario == null|| providerType ==null) {
             startActivityForResult(AuthUI.getInstance()
-                    .createSignInIntentBuilder().setAvailableProviders(providers)
+                    .createSignInIntentBuilder()
+                    .setLogo(R.mipmap.ic_launcher)
+                    .setTheme(R.style.FirebaseUITema)
+                    .setAvailableProviders(providers)
                     .setIsSmartLockEnabled(true).build(), RC_SIGN_IN);
         }
     }

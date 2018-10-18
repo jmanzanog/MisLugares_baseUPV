@@ -8,4 +8,10 @@
     <string name="title_activity_maps">Map</string>
     <string name="facebook_application_id" translatable="false" >267901220521232</string>
     <string name="fb_login_protocol_scheme" translatable="false">fb267901220521232</string>
+    <string name="twitter_consumer_key" translatable="false">VVirDKw2wbDUt3w185qi0eTBs</string>
+    <string name="twitter_consumer_secret" translatable= "false">2ocyqOgj8naY6rJU8zWRLI5pEfonsGbkiuvi8YU3irTiEExV20</string>
+
+    <string name="fui_default_toolbar_title">Tipo de Autentificación</string>
+    <string name="fui_sign_in_with_email">Entra con tu correo</string>
+    <string name="fui_progress_dialog_signing_up">Creando cuenta...</string>
 </resources>
