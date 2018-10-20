@@ -78,7 +78,7 @@
         <activity android:name=".MapaActivity"
             android:label="Mapa"
             android:screenOrientation="portrait"/>
-        <activity android:name=".LoginActivity">
+        <activity android:name=".CustomLoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -97,6 +97,9 @@
 
         <activity android:name=".UsuarioActivity"
             android:label="Información sobre el usuario" />
+
+        <activity android:name=".LoginActivity"
+            android:label="FirebaseUI Login" />
     </application>
 
 </manifest>
