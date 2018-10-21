@@ -30,6 +30,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
@@ -46,7 +47,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         setContentView(R.layout.activity_main);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder() .permitAll().build());
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        for (Lugar lugar : LugaresVector.ejemploLugares()) {
+            db.collection("lugares").add(lugar);
+        }
+
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
         final DatabaseReference myRef = database.getReference("mensaje2");
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -271,7 +277,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent data) {
         if (requestCode == RESULTADO_PREFERENCIAS) {
-           // SelectorFragment.adaptador.setCursor(MainActivity.lugares.extraeCursor());
+            // SelectorFragment.adaptador.setCursor(MainActivity.lugares.extraeCursor());
             SelectorFragment.adaptador.notifyDataSetChanged();
         }
     }
