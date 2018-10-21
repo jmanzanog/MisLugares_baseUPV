@@ -40,6 +40,7 @@ import com.example.mislugares.R;
 import com.example.mislugares.actividad.EdicionLugarActivity;
 import com.example.mislugares.actividad.MainActivity;
 import com.example.mislugares.pojo.Lugar;
+import com.example.mislugares.util.ValoracionesFirestore;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.File;
@@ -52,6 +53,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import static com.example.mislugares.fragment.SelectorFragment.getAdaptador;
+import static com.example.mislugares.util.ValoracionesFirestore.guardarValoracion;
+import static com.example.mislugares.util.ValoracionesFirestore.leerValoracion;
+
 public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener {
     private long id;
     private Lugar lugar;
@@ -62,6 +67,7 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
     private Uri uriFoto;
     private View v;
     private String uidUsuariCreador;
+    private  TextView textView;
 
     @Override
     public View onCreateView(LayoutInflater inflador, ViewGroup contenedor,
@@ -116,6 +122,7 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
                 cambiarFecha();
             }
         });
+        textView = vista.findViewById(R.id.textView);
 
 
         return vista;
@@ -139,7 +146,7 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
         //lugar = SelectorFragment.adaptador.lugarPosicion((int) id);
         this.id = id;
         //lugar = SelectorFragment.adaptador.lugarPosicion((int) id);
-        lugar = SelectorFragment.getAdaptador().getItem((int) id);
+        lugar = getAdaptador().getItem((int) id);
         if (lugar != null) {
 
             TextView nombre = (TextView) v.findViewById(R.id.nombre);
@@ -179,19 +186,54 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
             TextView hora = (TextView) v.findViewById(R.id.hora);
             hora.setText(DateFormat.getTimeInstance().format(
                     new Date(lugar.getFecha())));
-            RatingBar valoracion = (RatingBar) v.findViewById(R.id.valoracion);
-            valoracion.setOnRatingBarChangeListener(null);
+            // RatingBar valoracion = (RatingBar) v.findViewById(R.id.valoracion);
+
+            final RatingBar valoracion = (RatingBar) v.findViewById(R.id.valoracion);
+            final String _id = getAdaptador().getKey((int) id);
+            final String usuario = FirebaseAuth.getInstance().getUid();
+
+            leerValoracion(_id, usuario, new ValoracionesFirestore.EscuchadorValoracion() {
+                @Override
+                public void onNoExiste() {
+                    this.onRespuesta(0.0);
+                }
+
+                @Override
+                public void onRespuesta(Double valor) {
+                   if (valor.equals(0.0)){
+                       textView.setText("Por favor, valora este lugar");
+                   }
+                    valoracion.setOnRatingBarChangeListener(null);
+                    valoracion.setRating(valor.floatValue());
+                    valoracion.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                        @Override
+                        public void onRatingChanged(RatingBar ratingBar, float valor, boolean fromUser) {
+                            guardarValoracion(_id, usuario, (double) valor);
+                        }
+                    });
+                }
+
+                @Override
+                public void onError(Exception e) {
+                }
+            });
+
+            /*valoracion.setOnRatingBarChangeListener(null);
             valoracion.setRating(lugar.getValoracion());
             valoracion.setOnRatingBarChangeListener(
                     new RatingBar.OnRatingBarChangeListener() {
                         @Override
                         public void onRatingChanged(RatingBar ratingBar,
                                                     float valor, boolean fromUser) {
-                            lugar.setValoracion(valor);
-                            actualizaLugar();
+                            String _id = getAdaptador().getKey((int) id);
+                            String usuario = FirebaseAuth.getInstance().getUid();
+                            guardarValoracion(_id, usuario, ((double) valor));
+                            *//*lugar.setValoracion(valor);
+                            actualizaLugar();*//*
                         }
                     });
             ponerFoto((ImageView) v.findViewById(R.id.foto), lugar.getFoto());
+        }*/
         }
     }
 
@@ -247,8 +289,8 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
-                        String _id = SelectorFragment.getAdaptador().getKey(id);
-                        lugar = SelectorFragment.getAdaptador().getItem((int) id);
+                        String _id = getAdaptador().getKey(id);
+                        lugar = getAdaptador().getItem((int) id);
                         uidUsuariCreador = FirebaseAuth.getInstance().getCurrentUser().getUid();
                         if (null != lugar.getUidUsuariCreador() && !(lugar.getUidUsuariCreador().equals(uidUsuariCreador))) {
                             mensaje("Acción denegada, solo el creador del lugar puede borrarlo");
@@ -433,7 +475,7 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
         SelectorFragment.adaptador.setCursor(MainActivity.lugares.extraeCursor());
 //        SelectorFragment.adaptador.notifyItemChanged((int) id);
         SelectorFragment.adaptador.notifyDataSetChanged();*/
-        String _id = SelectorFragment.getAdaptador().getKey((int) id);
+        String _id = getAdaptador().getKey((int) id);
         MainActivity.lugares.actualiza(_id, lugar);
     }
 
@@ -484,7 +526,7 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
     }
 
     private void mensaje(String mensaje) {
-        Toast toast1 = Toast.makeText(this.getContext(),mensaje, Toast.LENGTH_LONG);
+        Toast toast1 = Toast.makeText(this.getContext(), mensaje, Toast.LENGTH_LONG);
         toast1.show();
     }
 }
