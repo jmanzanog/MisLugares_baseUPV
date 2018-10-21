@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 ultimaLocalizazion();
                 activarProveedores();
                 //adaptador.notifyDataSetChanged();
-                SelectorFragment.adaptador.notifyDataSetChanged();
+                SelectorFragment.adaptador2.notifyDataSetChanged();
             }
         }
     }
@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     protected void onResume() {
         super.onResume();
         activarProveedores();
-        if (fragmentVista != null && SelectorFragment.adaptador.getItemCount() > 0) {
+        if (fragmentVista != null && SelectorFragment.adaptador2.getItemCount() > 0) {
             fragmentVista.actualizarVistas(0);
         }
     }
@@ -234,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         Log.d(Lugares.TAG, "Nueva localización: " + location);
         actualizaMejorLocaliz(location);
         //adaptador.notifyDataSetChanged();
-        SelectorFragment.adaptador.notifyDataSetChanged();
+        SelectorFragment.adaptador2.notifyDataSetChanged();
     }
 
     @Override
@@ -279,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                                     Intent data) {
         if (requestCode == RESULTADO_PREFERENCIAS) {
             // SelectorFragment.adaptador.setCursor(MainActivity.lugares.extraeCursor());
-            SelectorFragment.adaptador.notifyDataSetChanged();
+            SelectorFragment.adaptador2.notifyDataSetChanged();
         }
     }
 }

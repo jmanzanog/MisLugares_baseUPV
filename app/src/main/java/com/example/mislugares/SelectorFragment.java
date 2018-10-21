@@ -51,6 +51,18 @@ public class SelectorFragment extends Fragment {
         com.google.firebase.firestore.Query query = FirebaseFirestore.getInstance().collection("lugares").limit(50);
         FirestoreRecyclerOptions<Lugar> opciones = new FirestoreRecyclerOptions.Builder<Lugar>().setQuery(query, Lugar.class).build();
         adaptador2 = new AdaptadorLugaresFirestoreUI(opciones);
+        adaptador2.setOnItemClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adaptador2.startListening();
+                ((MainActivity) getActivity()).muestraLugar(
+                        recyclerView.getChildAdapterPosition(v));
+                /*Intent i = new Intent(getContext(), VistaLugarActivity.class);
+                i.putExtra("id", (long)
+                        recyclerView.getChildAdapterPosition(v));
+                startActivity(i);*/
+            }
+        });
         recyclerView.setAdapter(adaptador2);
         adaptador2.startListening();
        // recyclerView.setAdapter(adaptador);

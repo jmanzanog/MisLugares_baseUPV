@@ -135,7 +135,7 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
         //lugar = SelectorFragment.adaptador.lugarPosicion((int) id);
         this.id = id;
         //lugar = SelectorFragment.adaptador.lugarPosicion((int) id);
-        lugar = SelectorFragment.adaptador.getItem((int) id);
+        lugar = SelectorFragment.adaptador2.getItem((int) id);
         if (lugar != null) {
 
             TextView nombre = (TextView) v.findViewById(R.id.nombre);
@@ -243,16 +243,16 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
-                        String _id = SelectorFragment.adaptador.getKey(id);
-                        lugar = SelectorFragment.adaptador.getItem((int) id);
+                        String _id = SelectorFragment.adaptador2.getKey(id);
+                        lugar = SelectorFragment.adaptador2.getItem((int) id);
                         uidUsuariCreador = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                        if (null != lugar.getUidUsuariCreador() && uidUsuariCreador != lugar.getUidUsuariCreador()) {
+                        if (null != lugar.getUidUsuariCreador() && !(lugar.getUidUsuariCreador().equals(uidUsuariCreador))) {
                             mensaje("Acción denegada, solo el creador del lugar puede borrarlo");
                             return;
                         }
                         MainActivity.lugares.borrar(_id);
                         // SelectorFragment.adaptador.setCursor(MainActivity.lugares.extraeCursor());
-                        SelectorFragment.adaptador.notifyDataSetChanged();
+                        SelectorFragment.adaptador2.notifyDataSetChanged();
                         SelectorFragment selectorFragment = (SelectorFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.selector_fragment);
                         if (selectorFragment == null) {
                             getActivity().finish();
@@ -429,7 +429,7 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
         SelectorFragment.adaptador.setCursor(MainActivity.lugares.extraeCursor());
 //        SelectorFragment.adaptador.notifyItemChanged((int) id);
         SelectorFragment.adaptador.notifyDataSetChanged();*/
-        String _id = SelectorFragment.adaptador.getKey((int) id);
+        String _id = SelectorFragment.adaptador2.getKey((int) id);
         MainActivity.lugares.actualiza(_id, lugar);
     }
 
