@@ -38,4 +38,12 @@
         android:key="orden"
         android:summary="Que lugares quieres que aparezcan antes"
         android:title="Criterio de ordenación" />
+    <CheckBoxPreference
+        android:key="firestore"
+        android:summary="Usar Cloud Firestore en lugar de Realtime Database"
+        android:title="Usar Firestore" />
+    <CheckBoxPreference
+        android:key="firebaseUI"
+        android:summary="Utilizar FirebaseUI en lugar de directamente el SDK"
+        android:title="Usar FirebaseUI" />
 </PreferenceScreen>

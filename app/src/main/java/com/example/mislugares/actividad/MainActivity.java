@@ -22,11 +22,13 @@ import android.widget.EditText;
 
 import com.example.mislugares.lugar.Lugares;
 import com.example.mislugares.lugar.LugaresAsinc;
+import com.example.mislugares.lugar.LugaresFirebase;
 import com.example.mislugares.lugar.LugaresFirestore;
 import com.example.mislugares.util.PermisosUtilidades;
 import com.example.mislugares.R;
 import com.example.mislugares.fragment.SelectorFragment;
 import com.example.mislugares.fragment.VistaLugarFragment;
+import com.example.mislugares.util.Preferencias;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -68,7 +70,15 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             }
         });
         //lugares = new LugaresFirebase();
-        lugares = new LugaresFirestore();
+
+        Preferencias pref = Preferencias.getInstance();
+        pref.inicializa(this);
+        if (pref.usarFirestore()) {
+            lugares = new LugaresFirestore();
+        } else {
+            lugares = new LugaresFirebase();
+        }
+        //lugares = new LugaresFirestore();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         fragmentVista = (VistaLugarFragment) getSupportFragmentManager()

@@ -9,13 +9,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.mislugares.adaptador.AdaptadorLugaresFirebase;
+import com.example.mislugares.adaptador.AdaptadorLugaresFirebaseUI;
+import com.example.mislugares.adaptador.AdaptadorLugaresFirestore;
+import com.example.mislugares.adaptador.AdaptadorLugaresInterface;
 import com.example.mislugares.util.Preferencias;
 import com.example.mislugares.R;
 import com.example.mislugares.actividad.MainActivity;
 import com.example.mislugares.adaptador.AdaptadorLugaresFirestoreUI;
 import com.example.mislugares.pojo.Lugar;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import static com.example.mislugares.util.Preferencias.SELECCION_MIOS;
@@ -29,10 +35,13 @@ public class SelectorFragment extends Fragment {
     //private RecyclerView recyclerView;
     // public static AdaptadorLugaresBD adaptador;
     // public static AdaptadorLugaresFirebaseUI adaptador;
-    public static AdaptadorLugaresFirestoreUI adaptador2;
+    // public static AdaptadorLugaresFirestoreUI adaptador2;
+
+    public static RecyclerView.Adapter adaptador2;
     private static RecyclerView recyclerView;
     private static Context context;
     private static RecyclerView.LayoutManager layoutManager;
+    private static Preferencias pref;
 
     @Override
     public View onCreateView(LayoutInflater inflador, ViewGroup contenedor,
@@ -50,10 +59,10 @@ public class SelectorFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         context = getContext();
         ponerAdaptador();
-        adaptador2.setOnItemClickListener(new View.OnClickListener() {
+        getAdaptador().setOnItemClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                adaptador2.startListening();
+                getAdaptador().startListening();
                 ((MainActivity) getActivity()).muestraLugar(
                         recyclerView.getChildAdapterPosition(v));
                 /*Intent i = new Intent(getContext(), VistaLugarActivity.class);
@@ -64,6 +73,21 @@ public class SelectorFragment extends Fragment {
         });
 
 
+    }
+
+    private static void defaultadaptor(){
+        com.google.firebase.firestore.Query query = FirebaseFirestore.getInstance().collection("lugares").orderBy(pref.criterioOrdenacion()).limit(pref.maximoMostrar());
+        switch (pref.criterioSeleccion()) {
+            case SELECCION_MIOS:
+                query = query.whereEqualTo("uidUsuariCreador", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                break;
+            case SELECCION_TIPO:
+                query = query.whereEqualTo("tipo", pref.tipoSeleccion());
+                break;
+
+        }
+        FirestoreRecyclerOptions<Lugar> opciones = new FirestoreRecyclerOptions.Builder<Lugar>().setQuery(query, Lugar.class).build();
+        adaptador2 = new AdaptadorLugaresFirestoreUI(opciones);
     }
 
     /*public void initAdapter() {
@@ -88,7 +112,7 @@ public class SelectorFragment extends Fragment {
     public void onStart() {
         super.onStart();
         //adaptador.startListening();
-        adaptador2.startListening();
+        getAdaptador().startListening();
     }
 
     @Override
@@ -101,11 +125,11 @@ public class SelectorFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         //adaptador.stopListening();
-        adaptador2.stopListening();
+        getAdaptador().stopListening();
     }
 
     public static void ponerAdaptador() {
-        Preferencias pref = Preferencias.getInstance();
+        pref = Preferencias.getInstance();
         pref.inicializa(context);
 // Poner el código aquí
 
@@ -114,8 +138,8 @@ public class SelectorFragment extends Fragment {
                 MainActivity.lugares, MainActivity.lugares.extraeCursor());*/
         // recyclerView.setAdapter(adaptador);
         //  initAdapter();
-      //  com.google.firebase.firestore.Query query = FirebaseFirestore.getInstance().collection("lugares").limit(50);
-        com.google.firebase.firestore.Query query = FirebaseFirestore.getInstance().collection("lugares").orderBy(pref.criterioOrdenacion()).limit(pref.maximoMostrar());
+        //  com.google.firebase.firestore.Query query = FirebaseFirestore.getInstance().collection("lugares").limit(50);
+        /*com.google.firebase.firestore.Query query = FirebaseFirestore.getInstance().collection("lugares").orderBy(pref.criterioOrdenacion()).limit(pref.maximoMostrar());
         switch (pref.criterioSeleccion()) {
             case SELECCION_MIOS:
                 query = query.whereEqualTo("uidUsuariCreador", FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -126,11 +150,63 @@ public class SelectorFragment extends Fragment {
 
         }
         FirestoreRecyclerOptions<Lugar> opciones = new FirestoreRecyclerOptions.Builder<Lugar>().setQuery(query, Lugar.class).build();
-        adaptador2 = new AdaptadorLugaresFirestoreUI(opciones);
+        adaptador2 = new AdaptadorLugaresFirestoreUI(opciones);*/
 
+
+        if (pref.usarFirestore()) {
+            com.google.firebase.firestore.Query query = FirebaseFirestore.getInstance().collection("lugares").orderBy(pref.criterioOrdenacion()).limit(pref.maximoMostrar());
+            switch (pref.criterioSeleccion()) {
+                case SELECCION_MIOS:
+                    query = query.whereEqualTo("creador", FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                    break;
+                case SELECCION_TIPO:
+                    query = query.whereEqualTo("tipo", pref.tipoSeleccion());
+                    break;
+            } if (pref.usarFirebaseUI()) {
+                FirestoreRecyclerOptions<Lugar> options = new FirestoreRecyclerOptions.Builder<Lugar>().setQuery(query, Lugar.class).build();
+                adaptador2 = new AdaptadorLugaresFirestoreUI(options);
+            } else {
+                adaptador2 = new AdaptadorLugaresFirestore(context, query);
+            }
+        } else {
+            if (pref.usarFirebaseUI()) {
+                com.google.firebase.database.Query query = FirebaseDatabase.getInstance().getReference().child("lugares").limitToLast(pref.maximoMostrar());
+                switch (pref.criterioSeleccion()) {
+                    case SELECCION_MIOS:
+                        query = query.orderByChild("creador").equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                        break;
+                    case SELECCION_TIPO:
+                        query = query.orderByChild("tipo").equalTo(pref.tipoSeleccion());
+                        break;
+                    default:
+                        query = query.orderByChild(pref.criterioOrdenacion());
+                        break;
+                }
+                FirebaseRecyclerOptions<Lugar> options = new FirebaseRecyclerOptions.Builder<Lugar>().setQuery(query, Lugar.class).build();
+                adaptador2 = new AdaptadorLugaresFirebaseUI(options);
+            } else {
+                adaptador2 = new AdaptadorLugaresFirebase(context, FirebaseDatabase.getInstance().getReference("lugares"));
+            }
+        }
+
+        defaultadaptor();
+
+        getAdaptador().setOnItemClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) context).muestraLugar(recyclerView.getChildAdapterPosition(v));
+            }
+        });
+
+        getAdaptador().startListening();
         recyclerView.setAdapter(adaptador2);
-        adaptador2.startListening();
+
         // recyclerView.setAdapter(adaptador);
 
+    }
+
+    public static AdaptadorLugaresInterface getAdaptador() {
+        return (AdaptadorLugaresInterface) adaptador2;
     }
 }

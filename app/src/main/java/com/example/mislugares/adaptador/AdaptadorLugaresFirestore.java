@@ -20,7 +20,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdaptadorLugaresFirestore extends RecyclerView.Adapter<AdaptadorLugares.ViewHolder> implements EventListener<QuerySnapshot> {
+public class AdaptadorLugaresFirestore extends RecyclerView.Adapter<AdaptadorLugares.ViewHolder> implements EventListener<QuerySnapshot> , AdaptadorLugaresInterface{
     public static final String TAG = "Mislugares";
     private Query query;
     private List<DocumentSnapshot> items;
