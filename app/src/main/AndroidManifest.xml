@@ -17,7 +17,7 @@
 
         android:theme="@style/AppTheme"> <!--android:supportsRtl="true"-->
         <activity
-            android:name=".MainActivity"
+            android:name=".actividad.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <!--<intent-filter>
@@ -27,17 +27,17 @@
             </intent-filter>-->
         </activity>
         <activity
-            android:name=".AcercaDeActivity"
+            android:name=".actividad.AcercaDeActivity"
             android:label="Acerca de ..."
             android:theme="@android:style/Theme.Dialog" />
         <activity
-            android:name=".PreferenciasActivity"
+            android:name=".actividad.PreferenciasActivity"
             android:label="Preferencias" />
         <activity
-            android:name=".VistaLugarActivity"
+            android:name=".actividad.VistaLugarActivity"
             android:label="Vista de un lugar" />
         <activity
-            android:name=".EdicionLugarActivity"
+            android:name=".actividad.EdicionLugarActivity"
             android:label="Edición de un lugar" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -75,10 +75,10 @@
 
 
 
-        <activity android:name=".MapaActivity"
+        <activity android:name=".actividad.MapaActivity"
             android:label="Mapa"
             android:screenOrientation="portrait"/>
-        <activity android:name=".CustomLoginActivity">
+        <activity android:name=".actividad.CustomLoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -95,10 +95,10 @@
             </meta-data>
         </provider>
 
-        <activity android:name=".UsuarioActivity"
+        <activity android:name=".actividad.UsuarioActivity"
             android:label="Información sobre el usuario" />
 
-        <activity android:name=".LoginActivity"
+        <activity android:name=".actividad.LoginActivity"
             android:label="FirebaseUI Login" />
     </application>
 
