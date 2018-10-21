@@ -41,13 +41,23 @@ public class SelectorFragment extends Fragment {
                 MainActivity.lugares, MainActivity.lugares.extraeCursor());*/
 
         // recyclerView.setAdapter(adaptador);
+
+
+        initAdapter();
+
+        recyclerView.setAdapter(adaptador);
+
+
+    }
+
+    public void initAdapter() {
         Query query = FirebaseDatabase.getInstance().getReference().child("lugares").limitToLast(50);
         FirebaseRecyclerOptions<Lugar> opciones = new FirebaseRecyclerOptions.Builder<Lugar>().setQuery(query, Lugar.class).build();
         adaptador = new AdaptadorLugaresFirebaseUI(opciones);
-        recyclerView.setAdapter(adaptador);
         adaptador.setOnItemClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                adaptador.startListening();
                 ((MainActivity) getActivity()).muestraLugar(
                         recyclerView.getChildAdapterPosition(v));
                 /*Intent i = new Intent(getContext(), VistaLugarActivity.class);
@@ -56,8 +66,6 @@ public class SelectorFragment extends Fragment {
                 startActivity(i);*/
             }
         });
-
-        adaptador.startListening();
     }
 
     @Override
@@ -69,7 +77,7 @@ public class SelectorFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        adaptador.stopListening();
+       // adaptador.stopListening();
     }
 
     @Override

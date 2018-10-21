@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -34,6 +35,8 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -54,6 +57,7 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
     final static int RESULTADO_FOTO = 3;
     private Uri uriFoto;
     private View v;
+    private String uidUsuariCreador;
 
     @Override
     public View onCreateView(LayoutInflater inflador, ViewGroup contenedor,
@@ -108,6 +112,8 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
                 cambiarFecha();
             }
         });
+
+
         return vista;
     }
 
@@ -229,13 +235,21 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
     }
 
     public void borrarLugar(final int id) {
+
         new AlertDialog.Builder(getActivity())
                 .setTitle("Borrado de lugar")
                 .setMessage("¿Estás seguro que quieres eliminar este lugar?")
                 .setCancelable(false)
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
+
                         String _id = SelectorFragment.adaptador.getKey(id);
+                        lugar = SelectorFragment.adaptador.getItem((int) id);
+                        uidUsuariCreador = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                        if (null != lugar.getUidUsuariCreador() && uidUsuariCreador != lugar.getUidUsuariCreador()) {
+                            mensaje("Acción denegada, solo el creador del lugar puede borrarlo");
+                            return;
+                        }
                         MainActivity.lugares.borrar(_id);
                         // SelectorFragment.adaptador.setCursor(MainActivity.lugares.extraeCursor());
                         SelectorFragment.adaptador.notifyDataSetChanged();
@@ -463,5 +477,10 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
         TextView tFecha = (TextView) getView().findViewById(R.id.fecha);
         DateFormat formato = DateFormat.getDateInstance();
         tFecha.setText(formato.format(new Date(lugar.getFecha())));
+    }
+
+    private void mensaje(String mensaje) {
+        Toast toast1 = Toast.makeText(this.getContext(),mensaje, Toast.LENGTH_LONG);
+        toast1.show();
     }
 }

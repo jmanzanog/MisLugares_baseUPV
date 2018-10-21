@@ -12,6 +12,8 @@ import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.text.DateFormat;
 import java.util.Date;
 
@@ -25,6 +27,7 @@ public class EdicionLugarActivity extends AppCompatActivity {
     private EditText telefono;
     private EditText url;
     private EditText comentario;
+    private String uidUsuariCreador;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +53,8 @@ public class EdicionLugarActivity extends AppCompatActivity {
         url.setText(lugar.getUrl());
         comentario = (EditText) findViewById(R.id.comentario);
         comentario.setText(lugar.getComentario());
+        uidUsuariCreador = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
         tipo = (Spinner) findViewById(R.id.tipo);
         ArrayAdapter<String> adaptador = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, TipoLugar.getNombres());
@@ -81,6 +86,7 @@ public class EdicionLugarActivity extends AppCompatActivity {
                 lugar.setTelefono(Integer.parseInt(telefono.getText().toString()));
                 lugar.setUrl(url.getText().toString());
                 lugar.setComentario(comentario.getText().toString());
+                lugar.setUidUsuariCreador(uidUsuariCreador);
                 /*if (_id==-1) {
                     _id = SelectorFragment.adaptador.idPosicion((int) id);
                 }*/

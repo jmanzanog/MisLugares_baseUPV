@@ -11,6 +11,7 @@ public class Lugar {
     private long fecha;
     private float valoracion;
     private TipoLugar tipo;
+    private String uidUsuariCreador;
 
 
     public Lugar(String nombre, String direccion, double longitud,
@@ -44,6 +45,14 @@ public class Lugar {
         return direccion;
     }
 
+    public String getUidUsuariCreador() {
+        return uidUsuariCreador;
+    }
+
+    public void setUidUsuariCreador(String uidUsuariCreador) {
+        this.uidUsuariCreador = uidUsuariCreador;
+    }
+
     @Override
     public String toString() {
         return "Lugar{" +
@@ -57,6 +66,7 @@ public class Lugar {
                 ", fecha=" + fecha +
                 ", valoracion=" + valoracion +
                 ", tipo=" + tipo +
+                ", uidUsuarioCreador=" + uidUsuariCreador +
                 '}';
     }
 
