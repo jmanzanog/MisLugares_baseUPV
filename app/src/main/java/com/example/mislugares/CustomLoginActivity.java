@@ -58,6 +58,7 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
     private CallbackManager callbackManager;
     private LoginButton btnFacebook;
     private TwitterLoginButton btnTwitter;
+    private boolean unificar;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +71,7 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
                 .debug(true).build());
 
         setContentView(R.layout.activity_custom_login);
+        unificar = getIntent().getBooleanExtra("unificar", false);
         etCorreo = (EditText) findViewById(R.id.correo);
         etContraseña = (EditText) findViewById(R.id.contraseña);
         tilCorreo = (TextInputLayout) findViewById(R.id.til_correo);
@@ -109,7 +111,6 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
         });
 
 
-
         btnTwitter = (TwitterLoginButton) findViewById(R.id.twitter);
         btnTwitter.setCallback(new Callback<TwitterSession>() {
             @Override
@@ -122,13 +123,15 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
                 mensaje(exception.getLocalizedMessage());
             }
         });
+
+
         verificaSiUsuarioValidado();
 
 
     }
 
     private void verificaSiUsuarioValidado() {
-        if (auth.getCurrentUser() != null) {
+        if (!unificar && auth.getCurrentUser() != null) {
             Intent i = new Intent(this, MainActivity.class);
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(i);
@@ -232,13 +235,33 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
 
     private void googleAuth(GoogleSignInAccount acct) {
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        auth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+        if (unificar) {
+            unificarCon(credential);
+        }else{
+            auth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (!task.isSuccessful()) {
+                        mensaje(task.getException().getLocalizedMessage());
+                    } else {
+                        verificaSiUsuarioValidado();
+                    }
+                }
+            });
+        }
+
+    }
+
+    private void unificarCon(AuthCredential credential) {
+        auth.getCurrentUser().linkWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if (!task.isSuccessful()) {
-                    mensaje(task.getException().getLocalizedMessage());
-                } else {
+                if (task.isSuccessful()) {
+                    unificar = false;
                     verificaSiUsuarioValidado();
+                } else {
+                    Log.w("MisLugares", "Error en linkWithCredential", task.getException());
+                    mensaje("Error al unificar cuentas.");
                 }
             }
         });
@@ -270,6 +293,22 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
                     mensaje(task.getException().getLocalizedMessage());
                 } else {
                     verificaSiUsuarioValidado();
+                }
+            }
+        });
+    }
+
+    public void autentificaciónAnónima(View v) {
+        dialogo.show();
+        auth.signInAnonymously().addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    verificaSiUsuarioValidado();
+                } else {
+                    dialogo.dismiss();
+                    Log.w("MisLugares", "Error en signInAnonymously", task.getException());
+                    mensaje("ERROR al intentarentrar de forma anónima");
                 }
             }
         });
