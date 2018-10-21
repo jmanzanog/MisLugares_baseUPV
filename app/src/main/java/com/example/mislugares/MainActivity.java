@@ -66,7 +66,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 Log.w("Ejemplo Firebase", "Error al leer.", error.toException());
             }
         });
-        lugares = new LugaresFirebase();
+        //lugares = new LugaresFirebase();
+        lugares = new LugaresFirestore();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         fragmentVista = (VistaLugarFragment) getSupportFragmentManager()
