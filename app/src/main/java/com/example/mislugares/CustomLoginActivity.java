@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -33,6 +34,16 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.TwitterAuthProvider;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.DefaultLogger;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.Twitter;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterConfig;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
 public class CustomLoginActivity extends FragmentActivity implements GoogleApiClient.OnConnectionFailedListener {
     private FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -46,10 +57,18 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
     private GoogleApiClient googleApiClient;
     private CallbackManager callbackManager;
     private LoginButton btnFacebook;
+    private TwitterLoginButton btnTwitter;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(this);
+        //Twitter
+        Twitter.initialize(new TwitterConfig.Builder(this)
+                .logger(new DefaultLogger(Log.DEBUG))
+                .twitterAuthConfig(new TwitterAuthConfig(getString(R.string.
+                        twitter_consumer_key), getString(R.string.twitter_consumer_secret)))
+                .debug(true).build());
+
         setContentView(R.layout.activity_custom_login);
         etCorreo = (EditText) findViewById(R.id.correo);
         etContraseña = (EditText) findViewById(R.id.contraseña);
@@ -59,7 +78,6 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
         dialogo = new ProgressDialog(this);
         dialogo.setTitle("Verificando usuario");
         dialogo.setMessage("Por favor espere...");
-        verificaSiUsuarioValidado();
         //Google
         GoogleSignInOptions gso = new GoogleSignInOptions.
                 Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).
@@ -89,6 +107,23 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
                 mensaje(error.getLocalizedMessage());
             }
         });
+
+
+
+        btnTwitter = (TwitterLoginButton) findViewById(R.id.twitter);
+        btnTwitter.setCallback(new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                twitterAuth(result.data);
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                mensaje(exception.getLocalizedMessage());
+            }
+        });
+        verificaSiUsuarioValidado();
+
 
     }
 
@@ -190,6 +225,8 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
             }
         } else if (requestCode == btnFacebook.getRequestCode()) {
             callbackManager.onActivityResult(requestCode, resultCode, data);
+        } else if (requestCode == TwitterAuthConfig.DEFAULT_AUTH_REQUEST_CODE) {
+            btnTwitter.onActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -216,6 +253,20 @@ public class CustomLoginActivity extends FragmentActivity implements GoogleApiCl
                     if (task.getException() instanceof FirebaseAuthUserCollisionException) {
                         LoginManager.getInstance().logOut();
                     }
+                    mensaje(task.getException().getLocalizedMessage());
+                } else {
+                    verificaSiUsuarioValidado();
+                }
+            }
+        });
+    }
+
+    private void twitterAuth(TwitterSession session) {
+        AuthCredential credential = TwitterAuthProvider.getCredential(session.getAuthToken().token, session.getAuthToken().secret);
+        auth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (!task.isSuccessful()) {
                     mensaje(task.getException().getLocalizedMessage());
                 } else {
                     verificaSiUsuarioValidado();
