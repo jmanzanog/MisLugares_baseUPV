@@ -9,8 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 /**
  * Created by Jesús Tomás on 19/04/2017.
@@ -18,8 +20,9 @@ import com.google.firebase.database.Query;
 
 public class SelectorFragment extends Fragment {
     private RecyclerView recyclerView;
-   // public static AdaptadorLugaresBD adaptador;
+    // public static AdaptadorLugaresBD adaptador;
     public static AdaptadorLugaresFirebaseUI adaptador;
+    public static AdaptadorLugaresFirestoreUI adaptador2;
 
     @Override
     public View onCreateView(LayoutInflater inflador, ViewGroup contenedor,
@@ -43,9 +46,14 @@ public class SelectorFragment extends Fragment {
         // recyclerView.setAdapter(adaptador);
 
 
-        initAdapter();
+        //  initAdapter();
 
-        recyclerView.setAdapter(adaptador);
+        com.google.firebase.firestore.Query query = FirebaseFirestore.getInstance().collection("lugares").limit(50);
+        FirestoreRecyclerOptions<Lugar> opciones = new FirestoreRecyclerOptions.Builder<Lugar>().setQuery(query, Lugar.class).build();
+        adaptador2 = new AdaptadorLugaresFirestoreUI(opciones);
+        recyclerView.setAdapter(adaptador2);
+        adaptador2.startListening();
+       // recyclerView.setAdapter(adaptador);
 
 
     }
@@ -71,18 +79,20 @@ public class SelectorFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        adaptador.startListening();
+        //adaptador.startListening();
+        adaptador2.startListening();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-       // adaptador.stopListening();
+        // adaptador.stopListening();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        adaptador.stopListening();
+        //adaptador.stopListening();
+        adaptador2.stopListening();
     }
 }

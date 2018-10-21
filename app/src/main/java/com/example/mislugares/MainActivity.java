@@ -47,10 +47,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         setContentView(R.layout.activity_main);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        /*FirebaseFirestore db = FirebaseFirestore.getInstance();
         for (Lugar lugar : LugaresVector.ejemploLugares()) {
             db.collection("lugares").add(lugar);
-        }
+        }*/
 
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
         final DatabaseReference myRef = database.getReference("mensaje2");
