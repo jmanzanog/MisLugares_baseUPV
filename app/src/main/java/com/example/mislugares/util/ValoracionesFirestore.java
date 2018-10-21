@@ -8,6 +8,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Transaction;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -67,7 +69,7 @@ public class ValoracionesFirestore {
         });
     }
 
-    private static void actualizarValoracionMedia(final String lugar, final String usuario, final double viejaVal, final double nuevaVal) {
+   /* private static void actualizarValoracionMedia(final String lugar, final String usuario, final double viejaVal, final double nuevaVal) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         final DocumentReference refLugar = db.collection("lugares").document(lugar);
         refLugar.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -88,6 +90,27 @@ public class ValoracionesFirestore {
                 } else {
                     Log.e("Mis Lugares", "ERROR al leer", task.getException());
                 }
+            }
+        });
+    }*/
+
+
+    private static void actualizarValoracionMedia(final String lugar, final String usuario, final double viejaVal, final double nuevaVal) {
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        final DocumentReference ref = db.collection("lugares").document(lugar);
+        db.runTransaction(new Transaction.Function<Void>() {
+            @Override
+            public Void apply(Transaction transaction) throws FirebaseFirestoreException {
+                DocumentSnapshot snapshot = transaction.get(ref);
+                double media = snapshot.getDouble("valoracion");
+                long nValoraciones = snapshot.getLong("n_valoraciones");
+                double nuevaMedia = nuevaMedia(media, nValoraciones, viejaVal, nuevaVal);
+                if (viejaVal == Double.NaN) nValoraciones++;
+                transaction.update(ref, "valoracion", nuevaMedia, "n_valoraciones", nValoraciones);
+                Map<String, Object> datos = new HashMap<>();
+                datos.put("valoracion", nuevaVal);
+                transaction.set(db.collection("lugares").document(lugar).collection("valoraciones").document(usuario), datos);
+                return null;
             }
         });
     }
