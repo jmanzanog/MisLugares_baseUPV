@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -98,9 +100,9 @@ public class ValoracionesFirestore {
     private static void actualizarValoracionMedia(final String lugar, final String usuario, final double viejaVal, final double nuevaVal) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final DocumentReference ref = db.collection("lugares").document(lugar);
-        db.runTransaction(new Transaction.Function<Void>() {
+        db.runTransaction(new Transaction.Function<Double>() {
             @Override
-            public Void apply(Transaction transaction) throws FirebaseFirestoreException {
+            public Double apply(Transaction transaction) throws FirebaseFirestoreException {
                 DocumentSnapshot snapshot = transaction.get(ref);
                 double media = snapshot.getDouble("valoracion");
                 long nValoraciones = snapshot.getLong("n_valoraciones");
@@ -110,7 +112,17 @@ public class ValoracionesFirestore {
                 Map<String, Object> datos = new HashMap<>();
                 datos.put("valoracion", nuevaVal);
                 transaction.set(db.collection("lugares").document(lugar).collection("valoraciones").document(usuario), datos);
-                return null;
+                return nuevaMedia;
+            }
+        }).addOnSuccessListener(new OnSuccessListener<Double>() {
+            @Override
+            public void onSuccess(Double result) {
+                Log.d("Mis Lugares", "Transaccion OK. Nueva media : " + result);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w("Mis Lugares", "Transaccion errónea.", e);
             }
         });
     }
