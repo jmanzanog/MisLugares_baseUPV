@@ -21,7 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class SelectorFragment extends Fragment {
     private RecyclerView recyclerView;
     // public static AdaptadorLugaresBD adaptador;
-    public static AdaptadorLugaresFirebaseUI adaptador;
+   // public static AdaptadorLugaresFirebaseUI adaptador;
     public static AdaptadorLugaresFirestoreUI adaptador2;
 
     @Override
@@ -70,7 +70,7 @@ public class SelectorFragment extends Fragment {
 
     }
 
-    public void initAdapter() {
+    /*public void initAdapter() {
         Query query = FirebaseDatabase.getInstance().getReference().child("lugares").limitToLast(50);
         FirebaseRecyclerOptions<Lugar> opciones = new FirebaseRecyclerOptions.Builder<Lugar>().setQuery(query, Lugar.class).build();
         adaptador = new AdaptadorLugaresFirebaseUI(opciones);
@@ -80,13 +80,13 @@ public class SelectorFragment extends Fragment {
                 adaptador.startListening();
                 ((MainActivity) getActivity()).muestraLugar(
                         recyclerView.getChildAdapterPosition(v));
-                /*Intent i = new Intent(getContext(), VistaLugarActivity.class);
+                *//*Intent i = new Intent(getContext(), VistaLugarActivity.class);
                 i.putExtra("id", (long)
                         recyclerView.getChildAdapterPosition(v));
-                startActivity(i);*/
+                startActivity(i);*//*
             }
         });
-    }
+    }*/
 
     @Override
     public void onStart() {
