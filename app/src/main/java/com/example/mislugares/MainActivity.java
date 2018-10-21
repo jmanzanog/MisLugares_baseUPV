@@ -9,6 +9,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -32,7 +33,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
-    public static LugaresBD lugares;
+    public static LugaresAsinc lugares;
     private LocationManager manejador;
     private Location mejorLocaliz;
     private static final int SOLICITUD_PERMISO_LOCALIZACION = 0;
@@ -44,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder() .permitAll().build());
         final DatabaseReference myRef = database.getReference("mensaje2");
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -57,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 Log.w("Ejemplo Firebase", "Error al leer.", error.toException());
             }
         });
-        lugares = new LugaresBD(this);
+        lugares = new LugaresFirebase();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         fragmentVista = (VistaLugarFragment) getSupportFragmentManager()
@@ -69,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
 
                 myRef.setValue("¡Hola, otra vez!");
-                long _id = lugares.nuevo();
+                String _id = lugares.nuevo();
                 Intent i = new Intent(MainActivity.this, EdicionLugarActivity.class);
                 i.putExtra("_id", _id);
                 startActivity(i);
@@ -268,7 +271,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent data) {
         if (requestCode == RESULTADO_PREFERENCIAS) {
-            SelectorFragment.adaptador.setCursor(MainActivity.lugares.extraeCursor());
+           // SelectorFragment.adaptador.setCursor(MainActivity.lugares.extraeCursor());
             SelectorFragment.adaptador.notifyDataSetChanged();
         }
     }
