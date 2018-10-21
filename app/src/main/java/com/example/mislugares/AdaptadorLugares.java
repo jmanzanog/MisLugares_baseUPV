@@ -63,7 +63,7 @@ public class AdaptadorLugares extends
         holder.nombre.setText(lugar.getNombre());
         holder.direccion.setText(lugar.getDireccion());
         int id = R.drawable.otros;
-        switch(lugar.getTipo()) {
+        switch(lugar.getTipoEnum()) {
             case RESTAURANTE:id = R.drawable.restaurante; break;
             case BAR:        id = R.drawable.bar;         break;
             case COPAS:      id = R.drawable.copas;       break;

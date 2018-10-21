@@ -57,6 +57,7 @@ public class LoginActivity extends AppCompatActivity {
 
         }
         if ((usuario != null&&providerType!=null&&!"password".equals(providerType))||((usuario != null&&"password".equals(providerType)&&usuario.isEmailVerified()))) {
+            Usuarios.guardarUsuario(usuario);
             Toast.makeText(this, "inicia sesión: " +
                     usuario.getDisplayName()+" - "+ usuario.getEmail()+" - "+
                     usuario.getProviders().get(0),Toast.LENGTH_LONG).show();
