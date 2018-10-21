@@ -123,6 +123,16 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/twitter" />
 
+        <Button
+            android:id="@+id/getpassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:onClick="reestablecerContraseña"
+            android:text="Reestablecer Contraseña"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/anonimo" />
 
     </android.support.constraint.ConstraintLayout>
 </ScrollView>
