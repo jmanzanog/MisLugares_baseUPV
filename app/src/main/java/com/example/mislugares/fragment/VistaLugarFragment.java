@@ -55,6 +55,7 @@ import java.util.Date;
 
 import static com.example.mislugares.fragment.SelectorFragment.getAdaptador;
 import static com.example.mislugares.util.ValoracionesFirestore.guardarValoracion;
+import static com.example.mislugares.util.ValoracionesFirestore.guardarValoracionYRecalcular;
 import static com.example.mislugares.util.ValoracionesFirestore.leerValoracion;
 
 public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener {
@@ -208,7 +209,7 @@ public class VistaLugarFragment extends Fragment implements TimePickerDialog.OnT
                     valoracion.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
                         @Override
                         public void onRatingChanged(RatingBar ratingBar, float valor, boolean fromUser) {
-                            guardarValoracion(_id, usuario, (double) valor);
+                            guardarValoracionYRecalcular(_id, usuario,  (long) valor);
                         }
                     });
                 }

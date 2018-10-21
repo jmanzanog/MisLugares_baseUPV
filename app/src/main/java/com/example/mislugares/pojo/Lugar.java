@@ -12,6 +12,7 @@ public class Lugar {
     private float valoracion;
     private TipoLugar tipo;
     private String uidUsuariCreador;
+    private long n_valoraciones;
 
 
     public Lugar(String nombre, String direccion, double longitud,
@@ -31,6 +32,15 @@ public class Lugar {
         fecha = System.currentTimeMillis();
         posicion = new GeoPunto(0, 0);
         tipo = TipoLugar.OTROS;
+        n_valoraciones = 0;
+    }
+
+    public long getN_valoraciones() {
+        return n_valoraciones;
+    }
+
+    public void setN_valoraciones(long n_valoraciones) {
+        this.n_valoraciones = n_valoraciones;
     }
 
     public String getNombre() {
